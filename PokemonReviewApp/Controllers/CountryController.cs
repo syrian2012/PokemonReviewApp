@@ -26,7 +26,7 @@ namespace PokemonReviewApp.Controllers
             var countries = _mapper.Map<List<CountryDto>>(_countryRepositry.GetCountries());
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             return Ok(countries);
         }
@@ -42,7 +42,7 @@ namespace PokemonReviewApp.Controllers
             var country = _mapper.Map<CountryDto>(_countryRepositry.GetCountry(CountryID));
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             return Ok(country);
         }
@@ -55,7 +55,7 @@ namespace PokemonReviewApp.Controllers
             var country = _mapper.Map<CountryDto>(_countryRepositry.GetCountryByOwner(ownerID));
 
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(ModelState);
 
             return Ok(country);
         }
