@@ -90,5 +90,6 @@ namespace PokemonReviewApp.Controllers
             }
             return Ok("Category Created Successfully");
         }
+        
     }
 }
