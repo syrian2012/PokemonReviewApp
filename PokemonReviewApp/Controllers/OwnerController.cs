@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -12,13 +13,15 @@ namespace PokemonReviewApp.Controllers
     {
         private readonly IOwnerRepository _ownerRepository;
         private readonly IPokemonRepository _pokemonRepository;
+        private readonly ICountryRepositry _countryRepositry;
         private readonly IMapper _mapper;
 
 
-        public OwnerController(IOwnerRepository ownerRepository,IPokemonRepository pokemonRepository, IMapper mapper)
+        public OwnerController(IOwnerRepository ownerRepository,IPokemonRepository pokemonRepository,ICountryRepositry countryRepositry ,IMapper mapper)
         {
             _ownerRepository= ownerRepository;
             _pokemonRepository = pokemonRepository;
+            _countryRepositry = countryRepositry;
             _mapper = mapper;
         }
 
@@ -74,6 +77,30 @@ namespace PokemonReviewApp.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             return Ok(pokemons);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateOwner([FromQuery] int CountryID,[FromBody] CreateOwnerDto createOwner)
+        {
+            if (createOwner == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var ownerMap = _mapper.Map<Owner>(createOwner);
+
+            ownerMap.Country = _countryRepositry.GetCountry(CountryID);
+
+            if (!_ownerRepository.CreateOwner(ownerMap))
+            {
+                ModelState.AddModelError("", "Some Thing Went Wrong While Saving Your Entry");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Owner Created Successfully");
         }
 
     }
