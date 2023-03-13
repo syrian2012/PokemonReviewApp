@@ -59,5 +59,36 @@ namespace PokemonReviewApp.Controllers
 
             return Ok(country);
         }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateCountry([FromBody] CreateCountryDto createCountry)
+        {
+            if (createCountry == null)
+                return BadRequest(ModelState);
+
+            var country = _countryRepositry.GetCountries()
+                .Where(c => c.Name.Trim().ToLower() == createCountry.Name.Trim().ToLower()).FirstOrDefault();
+
+            if (country != null)
+            {
+                ModelState.AddModelError("", "Country Already Exists");
+                return StatusCode(422,ModelState);
+            }
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var countryMap = _mapper.Map<Country>(createCountry);
+
+            if (!_countryRepositry.CreateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Some Thing Went Wrong While Saving Your Entry");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Country Created Successfully");
+        }
     }
 }
