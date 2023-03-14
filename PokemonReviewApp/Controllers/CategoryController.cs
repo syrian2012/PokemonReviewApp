@@ -63,7 +63,7 @@ namespace PokemonReviewApp.Controllers
             return Ok(pokemons);
         }
 
-        [HttpPost("Create/{Name}")]
+        [HttpPost("{Name}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         public IActionResult CreateCategory(string Name)
@@ -89,6 +89,34 @@ namespace PokemonReviewApp.Controllers
                 return StatusCode(500, ModelState);
             }
             return Ok("Category Created Successfully");
+        }
+
+        [HttpPut("{CategoryID}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int CategoryID, [FromBody] CategoryDto updateCategory) 
+        {
+            if (updateCategory == null)
+                return BadRequest(ModelState);
+
+            if (CategoryID != updateCategory.ID)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_categoryRepository.CategoriesExists(CategoryID))
+                return NotFound();
+
+            var categoryMap = _mapper.Map<Category>(updateCategory);
+
+            if (!_categoryRepository.UpdateCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Some Thing Went Wrong While Updating Your Entry");
+                return StatusCode(500,ModelState);
+            }
+            return NoContent();
         }
         
     }
