@@ -69,6 +69,15 @@ namespace PokemonReviewApp.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var reviewer = _reviewerRepository.GetReviewers()
+                .Where(r => r.FisrtName.Trim().ToLower() == createReviewer.FisrtName.Trim().ToLower()&& r.lastName.Trim().ToLower() == createReviewer.lastName.Trim().ToLower()).FirstOrDefault();
+
+            if (reviewer != null)
+            {
+                ModelState.AddModelError("", "Reviewer Already Exists");
+                return StatusCode(422, ModelState);
+            }
+
             var reviewerMap = _mapper.Map<Reviewer>(createReviewer);
 
             if (!_reviewerRepository.CreateReviewer(reviewerMap))
