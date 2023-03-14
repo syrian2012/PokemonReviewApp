@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -57,7 +58,27 @@ namespace PokemonReviewApp.Controllers
             return Ok(reviews);
         }
 
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateReviewer([FromBody] CreateReviewerDto createReviewer)
+        {
+            if (createReviewer == null)
+                return BadRequest(ModelState);
 
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewerMap = _mapper.Map<Reviewer>(createReviewer);
+
+            if (!_reviewerRepository.CreateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Some Thing Went Wrong While Saving Your Entry");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Reviewer Created Successfully");
+        }
 
 
     }

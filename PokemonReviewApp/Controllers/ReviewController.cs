@@ -85,7 +85,7 @@ namespace PokemonReviewApp.Controllers
             reviewMap.Reviewer = _reviewerRepository.GetReviewer(reviewerID);
 
 
-            if (!_reviewerRepository.CreateReview(reviewMap))
+            if (!_reviewRepository.CreateReview(reviewMap))
             {
                 ModelState.AddModelError("", "Some Thing Went Wrong While Saving Your Entry");
                 return StatusCode(500, ModelState);

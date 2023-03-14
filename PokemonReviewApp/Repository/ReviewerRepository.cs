@@ -14,9 +14,9 @@ namespace PokemonReviewApp.Repository
             _context = context;
         }
 
-        public bool CreateReview(Review review)
+        public bool CreateReviewer(Reviewer reviewer)
         {
-            _context.Add(review);
+            _context.Add(reviewer);
             return Save();
         }
 
