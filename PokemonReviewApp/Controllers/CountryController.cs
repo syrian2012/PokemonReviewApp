@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -89,6 +90,32 @@ namespace PokemonReviewApp.Controllers
             }
 
             return Ok("Country Created Successfully");
+        }
+
+        [HttpPut("{CountryID}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int CountryID, [FromBody] CreateCountryDto updateCountry)
+        {
+            if (updateCountry == null)
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_countryRepositry.CountryExist(CountryID))
+                return NotFound();
+
+            var countryMap = _mapper.Map<Country>(updateCountry);
+            countryMap.ID = CountryID;
+
+            if (!_countryRepositry.UpdateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Some Thing Went Wrong While Updating Your Entry");
+                return StatusCode(500, ModelState);
+            }
+            return NoContent();
         }
     }
 }
