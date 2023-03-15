@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
-using PokemonReviewApp.Repository;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -88,7 +87,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdatePokemon(int PokeID,[FromQuery] int catigoryID,[FromQuery] int ownerID, [FromBody] CreatePokemonDto updatePokemon)
+        public IActionResult UpdatePokemon(int PokeID,[FromBody] CreatePokemonDto updatePokemon)
         {
             if (updatePokemon == null)
                 return BadRequest(ModelState);
@@ -102,7 +101,7 @@ namespace PokemonReviewApp.Controllers
             var pokemonMap = _mapper.Map<Pokemon>(updatePokemon);
             pokemonMap.ID = PokeID;
             
-            if (!_pokemonRepository.UpdatePokemon(ownerID,catigoryID, pokemonMap))
+            if (!_pokemonRepository.UpdatePokemon(pokemonMap))
             {
                 ModelState.AddModelError("", "Some Thing Went Wrong While Updating Your Entry");
                 return StatusCode(500, ModelState);
