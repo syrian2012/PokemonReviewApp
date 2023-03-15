@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -107,6 +108,25 @@ namespace PokemonReviewApp.Controllers
                 return StatusCode(500, ModelState);
             }
             return NoContent();
+        }
+
+        [HttpDelete("{PokemonID}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeletePokemon(int PokemonID)
+        {
+            if (!_pokemonRepository.PokemonExists(PokemonID))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_pokemonRepository.DeletePokemon(PokemonID))
+            {
+                ModelState.AddModelError("", "Somthing Went Wrong While Deleting");
+            }
+            return Ok("Deleted!!");
         }
     }
 }

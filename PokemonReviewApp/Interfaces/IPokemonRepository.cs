@@ -10,6 +10,7 @@ namespace PokemonReviewApp.Interfaces
         bool PokemonExists(int id);
         bool CreatePokemon(int ownerID,int categoryID,Pokemon pokemon);
         bool UpdatePokemon(Pokemon pokemon);
+        bool DeletePokemon(int id);
         bool Save();
     }
 }
