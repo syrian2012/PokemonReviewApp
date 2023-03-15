@@ -96,7 +96,7 @@ namespace PokemonReviewApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public IActionResult UpdateCategory(int CountryID, [FromBody] CreateCountryDto updateCountry)
+        public IActionResult UpdateCountry(int CountryID, [FromBody] CreateCountryDto updateCountry)
         {
             if (updateCountry == null)
                 return BadRequest(ModelState);
@@ -116,6 +116,25 @@ namespace PokemonReviewApp.Controllers
                 return StatusCode(500, ModelState);
             }
             return NoContent();
+        }
+
+        [HttpDelete("{CountryID}")]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IActionResult DeleteCountry(int CountryID)
+        {
+            if (!_countryRepositry.CountryExist(CountryID))
+                return NotFound();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (!_countryRepositry.DeleteCountry(CountryID))
+            {
+                ModelState.AddModelError("", "Somthing Went Wrong While Deleting");
+            }
+            return Ok("Deleted!!");
         }
     }
 }

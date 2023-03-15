@@ -22,6 +22,17 @@ namespace PokemonReviewApp.Repository
             return Save();
         }
 
+        public bool DeleteCategory(Category category)
+        {
+            var pokemoncategory = _context.PokemonCategories.Where(pc => pc.Category == category);
+            foreach (var item in pokemoncategory)
+            {
+                _context.Remove(item);
+            }
+            _context.Remove(category);
+            return Save();
+        }
+
         public ICollection<Category> GetCategories()
         {
             return _context.Categories.OrderBy(c => c.ID).ToList();
